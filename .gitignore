@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+dist/
+build/
+
+# 环境与本地数据
+.env
+*.sqlite
+*.sqlite3
+data/
+
+# OpenCode 派生产物（插件自动安装，不入库）
+.opencode/node_modules/
+.opencode/package.json
+.opencode/package-lock.json
+.claude/worktrees/
+.claude/settings.local.json
+
+# 工具缓存
+.pytest_cache/
+.ruff_cache/
+.DS_Store

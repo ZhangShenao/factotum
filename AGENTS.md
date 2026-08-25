@@ -80,8 +80,8 @@ factotum/
 ├── notes/                      # 实验结论沉淀（每组实验一份笔记）
 ├── tests/                      # pytest
 ├── .github/workflows/ci.yml    # CI：uv sync --frozen + ruff + pytest
-├── .opencode/                  # OpenCode 配置（继承自 harness9，见 §7）
-├── .claude/                    # Claude Code 兼容配置（继承自 harness9）
+├── .opencode/                  # OpenCode 配置（commands，见 §7）
+├── .claude/                    # Claude Code 兼容配置（CLAUDE.md → AGENTS.md）
 ├── opencode.json               # OpenCode root 配置（superpowers 插件 + context7 MCP）
 ├── .mcp.json                   # MCP 服务器（context7）
 └── AGENTS.md                   # 本文件
@@ -148,18 +148,14 @@ factotum/
 
 ---
 
-## 7. OpenCode / Claude 配置（继承自 harness9）
+## 7. OpenCode / Claude 配置
 
-以下配置从 harness9 项目原样迁移，后续逐步适配本项目：
+早期从 harness9 迁移的配置中，harness9 专用部分（知识库日报 agents、harness-researcher、test-runner、release-cli skill、sync-to-obsidian 插件与 hook）已全部移除，仅保留通用部分：
 
-| 类别 | 位置 | 状态 |
+| 类别 | 位置 | 说明 |
 |------|------|------|
-| Sub-Agents | `.opencode/agents/`（analyzer / collector / organizer / harness-blog-writer / harness-enhancer / harness-researcher / test-runner） | analyzer/collector/organizer 为 harness9 知识库日报专用，**待适配或移除**；test-runner 思路可复用 |
-| Sub-Agents | `.claude/agents/`（harness-blog-writer / harness-enhancer / harness-researcher / test-runner） | 同上，harness 系列待适配 |
-| Commands | `.opencode/commands/`（commit / cr / pr / release-cli / sync-docs） | commit/cr/pr 通用可直接用；release-cli 与 sync-docs 为 harness9 专用，**待适配或移除** |
-| Skills | `.claude/skills/release-cli/` | harness9 发布流程专用，**待适配** |
-| Plugins | `.opencode/plugins/sync-to-obsidian.js` | 通用（同步笔记到 Obsidian），可直接用 |
-| MCP | `.mcp.json` + `opencode.json`（context7 + superpowers 插件） | 通用，直接用 |
+| Commands | `.opencode/commands/`（commit / cr / pr） | 通用 Git 工作流命令 |
+| MCP | `.mcp.json` + `opencode.json`（context7 + superpowers 插件） | 通用 |
 
 > 注意：`.opencode/node_modules/` 为插件自动安装产物，不入库；opencode 首次运行会按 `opencode.json` 中的 git 引用自动重装。
 

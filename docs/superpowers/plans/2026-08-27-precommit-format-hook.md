@@ -158,14 +158,14 @@ class TestFormatFile:
 
     def test_md_codeblock_protected(self, tmp_path) -> None:
         f = tmp_path / "note.md"
-        content = "```python\n# 块内基于 DeepAgents 不加空格\n```\n"
+        content = "```python\n# 块内基于DeepAgents不加空格\n```\n"
         f.write_text(content, encoding="utf-8")
         assert format_file(f) is False
         assert f.read_text(encoding="utf-8") == content
 
     def test_py_string_literal_preserved(self, tmp_path) -> None:
         f = tmp_path / "mod.py"
-        f.write_text('MSG = "错误：配置加载失败。"\n', encoding="utf-8")
+        f.write_text('MSG = "错误:配置加载失败."\n', encoding="utf-8")
         assert format_file(f) is False
 
     def test_no_cjk_unchanged(self, tmp_path) -> None:
@@ -179,7 +179,7 @@ class TestMain:
 
     def test_fix_mode_rewrites_and_exits_1(self, tmp_path) -> None:
         f = tmp_path / "note.md"
-        f.write_text("基于 DeepAgents 构建.\n", encoding="utf-8")
+        f.write_text("基于DeepAgents构建.\n", encoding="utf-8")
         assert main([str(f)]) == 1
         assert f.read_text(encoding="utf-8") == "基于 DeepAgents 构建。\n"
 
@@ -468,7 +468,7 @@ Expected: `pre-commit installed at .git/hooks/pre-commit`
 - [ ] **Step 3: 端到端验证（脏文件 → 提交中断 → 已修复未 re-stage）**
 
 ```bash
-printf '基于 DeepAgents 构建，测试.\n' > .tmp-hook-e2e.md
+printf '基于DeepAgents构建,测试.\n' > .tmp-hook-e2e.md
 git add .tmp-hook-e2e.md
 git commit -m "wip: hook e2e"; echo "exit=$?"
 cat .tmp-hook-e2e.md

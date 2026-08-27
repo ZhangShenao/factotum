@@ -36,7 +36,7 @@
 
 | 文件 | 职责 |
 |------|------|
-| `tools/copywriting.py` | 薄封装 CLI：读文件 → `autocorrect_py.format_for()` → 有变更写回并 exit 1；`--lint` 模式只报不改（供 CI）；无参数时默认处理 `git ls-files` 全量（手动全仓格式化入口） |
+| `tools/copywriting.py` | 薄封装 CLI：读文件 → `autocorrect_py.format_for()` → 有变更写回并 exit 1；`--lint` 模式只报不改（供 CI）；无参数时默认处理 `git ls-files` 全量（手动全仓格式化入口）。**`.py` 文件特殊处理**：autocorrect 默认会连字符串字面量一起改写（实测 `"错误:配置加载失败."` → `"错误：配置加载失败。"`），会破坏运行时文案与 AGENTS.md 错误消息约定，故对 `.py` 仅格式化注释与 docstring（tokenize 定位注释 token + ast 定位 docstring，按纯文本格式化其内容后原位拼回；注意 CPython `col_offset` 是 UTF-8 字节偏移，精确列位置必须取自 tokenize） |
 | `.autocorrectrc` | 规则配置（见 §6） |
 | `.autocorrectignore` | 忽略清单：`uv.lock`、`.opencode/node_modules/` 等自动生成物 |
 | `.pre-commit-config.yaml` | 三个 local hook（`language: system`，经 `uv run` 调用），版本始终跟 `uv.lock` 走 |
@@ -64,6 +64,8 @@ copywriting 放最后：其输出不影响 ruff 两个环节，避免顺序耦�
 - `spellcheck: 0` — 关闭实验性拼写检查（误伤拼音、领域术语）
 - `context.codeblock: 0` — 不格式化 Markdown 内代码块，保护 `notes/` 的 state dump 与实验代码样本
 
+注意：`.autocorrectrc` 不会从 cwd 自动加载（实测 SDK 行为），封装脚本必须显式读取并调用 `load_config(config_str)`。
+
 ## 7. 错误处理
 
 - 文件读写/编码异常：逐文件捕获，报文件名 + 原因，继续处理其余文件，最终 exit 1（单个坏文件不卡死整个提交）
@@ -75,6 +77,7 @@ copywriting 放最后：其输出不影响 ruff 两个环节，避免顺序耦�
 - 中英加空格：`基于DeepAgents构建` → `基于 DeepAgents 构建`
 - 全角标点：`这是第一句,第二句.` → `这是第一句，第二句。`
 - 无改动：纯英文注释、纯代码
+- `.py` 专属：注释与 docstring 被格式化，字符串字面量（含 f-string）原样保留；语法错误文件原样返回；幂等性（二次运行无变化）
 - CLI 行为：fix 模式写回 + exit 1；`--lint` 不写 + exit 1；干净文件 exit 0
 - 代码块保护：Markdown 内 code fence 内容不被改动
 

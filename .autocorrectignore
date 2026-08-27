@@ -1,0 +1,3 @@
+# 自动生成物不参与文案格式化
+uv.lock
+.opencode/node_modules

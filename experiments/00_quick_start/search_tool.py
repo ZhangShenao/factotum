@@ -1,8 +1,8 @@
 """
 网络搜索工具
 
-Tool三要素:
-Docstring：告诉 Agent 这个工具的用途,它决定了 Tool 的调用时机
+Tool 三要素：
+Docstring：告诉 Agent 这个工具的用途，它决定了 Tool 的调用时机
 参数类型标注：告诉 Agent 每个参数该传什么类型，它决定了 Tool 的 Schema
 默认值：标记哪些参数是可选的，它减少了必填项，降低了 LLM 的出错概率
 
@@ -21,7 +21,7 @@ load_dotenv()
 tavily_client = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
 
 # 构造网络搜索工具
-# 在LangChain的新版本中，普通的Python函数可以作为工具直接使用，而无需再使用 @tool 装饰器
+# 在 LangChain 的新版本中，普通的 Python 函数可以作为工具直接使用，而无需再使用 @tool 装饰器
 
 
 def internet_search(

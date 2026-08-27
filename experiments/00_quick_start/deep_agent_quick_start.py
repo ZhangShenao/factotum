@@ -20,7 +20,7 @@ model = ChatOpenAI(
     base_url=os.getenv("OPENAI_BASE_URL"),
 )
 
-# 定义System Prompt
+# 定义 System Prompt
 research_instructions = """你是一位专业的研究员。
 你的工作是进行深入研究，然后撰写一份完整的研究报告。
 """

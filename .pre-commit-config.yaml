@@ -1,0 +1,20 @@
+# 提交前格式化：ruff 修代码排版，copywriting 修 CJK 文案排版
+# 为什么用 local hooks：版本跟随 uv.lock，与 CI 单一事实来源
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-lint
+        name: ruff check --fix
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
+        language: system
+        types: [python]
+      - id: copywriting
+        name: copywriting (CJK 排版)
+        entry: uv run python tools/copywriting.py
+        language: system
+        files: \.(py|md|markdown|ya?ml|toml|json|txt|cfg|ini|example)$|^AGENTS\.md$

@@ -139,14 +139,7 @@ class TestFormatPython:
 
     def test_multiline_docstring(self) -> None:
         content = 'def f():\n    """第一行:说明,\n\n    第二行:细节.\n    """\n    return 1\n'
-        expected = (
-            "def f():\n"
-            "    \"\"\"第一行：说明，\n"
-            "\n"
-            "    第二行：细节。\n"
-            '    """\n'
-            "    return 1\n"
-        )
+        expected = 'def f():\n    """第一行：说明，\n\n    第二行：细节。\n    """\n    return 1\n'
         assert format_python(content) == expected
 
     def test_idempotent(self) -> None:
@@ -294,7 +287,7 @@ def _segment(lines: list[str], start: tuple[int, int], end: tuple[int, int]) -> 
     er, ec = end
     if sr == er:
         return lines[sr - 1][sc:ec]
-    return lines[sr - 1][sc:] + "".join(lines[sr:er - 1]) + lines[er - 1][:ec]
+    return lines[sr - 1][sc:] + "".join(lines[sr : er - 1]) + lines[er - 1][:ec]
 
 
 def format_python(content: str) -> str:
@@ -335,9 +328,7 @@ def format_python(content: str) -> str:
         if matched:
             inner = ac.format_for(matched.group(3), "x.txt")
             quote = matched.group(2)
-            edits.append(
-                (spans[0].start, spans[0].end, matched.group(1) + quote + inner + quote)
-            )
+            edits.append((spans[0].start, spans[0].end, matched.group(1) + quote + inner + quote))
     for tok in toks:
         if tok.type == tokenize.COMMENT:
             edits.append((tok.start, tok.end, ac.format_for(tok.string, "x.txt")))

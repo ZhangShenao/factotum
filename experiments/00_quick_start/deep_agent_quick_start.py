@@ -1,13 +1,14 @@
 """实验 00：DeepSeek Agent 快速入门。
-    - 无任何 middleware 时 agent 的原始行为（工具调用循环、消息流）
-    - state 结构里有什么、没有什么（为后续逐层 diff 建立基线）
+- 无任何 middleware 时 agent 的原始行为（工具调用循环、消息流）
+- state 结构里有什么、没有什么（为后续逐层 diff 建立基线）
 """
 
-from langchain_openai import ChatOpenAI
-from deepagents import create_deep_agent
-from search_tool import internet_search
 import os
+
+from deepagents import create_deep_agent
 from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
+from search_tool import internet_search
 
 # 加载环境变量
 load_dotenv()
@@ -26,14 +27,12 @@ research_instructions = """你是一位专业的研究员。
 
 # 创建 DeepAgent
 agent = create_deep_agent(
-    model=model,    # 指定 LLM 模型
+    model=model,  # 指定 LLM 模型
     tools=[internet_search],  # 设置工具列表
     system_prompt=research_instructions,  # 指定 System Prompt
 )
 
 # 运行 Agent
-result = agent.invoke(
-    {"messages": [{"role": "user", "content": "DeepAgents是什么？"}]}
-)
+result = agent.invoke({"messages": [{"role": "user", "content": "DeepAgents是什么？"}]})
 
 print(result["messages"][-1].content)

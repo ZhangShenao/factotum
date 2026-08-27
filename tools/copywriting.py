@@ -42,16 +42,23 @@ def _ensure_config() -> None:
 
 
 def _load_ignore_patterns() -> list[str]:
-    """读取 .autocorrectignore 的裸模式（# 注释行忽略）。"""
+    """读取 .autocorrectignore 的裸模式（# 注释行忽略，先 strip 再判前缀）。"""
     if not IGNORE_PATH.exists():
         return []
-    lines = IGNORE_PATH.read_text(encoding="utf-8").splitlines()
-    return [line.strip() for line in lines if line.strip() and not line.startswith("#")]
+    lines = (line.strip() for line in IGNORE_PATH.read_text(encoding="utf-8").splitlines())
+    return [line for line in lines if line and not line.startswith("#")]
 
 
 def _is_ignored(path: Path, patterns: list[str]) -> bool:
-    """简化版 gitignore 语义：相对路径全匹配、文件名匹配、目录前缀匹配。"""
-    rel = str(path)
+    """简化版 gitignore 语义：相对路径全匹配、文件名匹配、目录前缀匹配。
+
+    绝对路径先归一化为仓库相对路径，否则全路径/目录前缀豁免对绝对入参静默失效；
+    仓库外路径保持原样，交由文件名匹配兜底。
+    """
+    try:
+        rel = str(path.resolve().relative_to(REPO_ROOT))
+    except ValueError:
+        rel = str(path)
     for pat in patterns:
         if fnmatch.fnmatch(rel, pat) or fnmatch.fnmatch(path.name, pat):
             return True
@@ -152,9 +159,14 @@ def main(argv: list[str] | None = None) -> int:
     if args.files:
         files = [Path(f) for f in args.files]
     else:
-        listing = subprocess.run(
-            ["git", "ls-files"], capture_output=True, text=True, check=True, cwd=REPO_ROOT
-        )
+        try:
+            listing = subprocess.run(
+                ["git", "ls-files"], capture_output=True, text=True, check=True, cwd=REPO_ROOT
+            )
+        except subprocess.CalledProcessError as exc:
+            detail = (exc.stderr or "").strip() or f"exit {exc.returncode}"
+            print(f"git ls-files 执行失败: {detail}", file=sys.stderr)
+            return 1
         files = [Path(line) for line in listing.stdout.splitlines() if line.strip()]
 
     fix = not args.lint

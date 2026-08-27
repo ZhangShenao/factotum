@@ -2,7 +2,14 @@
 
 import pytest
 
-from tools.copywriting import format_file, format_python, main
+from tools.copywriting import (
+    REPO_ROOT,
+    _is_ignored,
+    _load_ignore_patterns,
+    format_file,
+    format_python,
+    main,
+)
 
 
 class TestFormatPython:
@@ -29,6 +36,13 @@ class TestFormatPython:
         content = 'def f():\n    """第一行:说明,\n\n    第二行:细节.\n    """\n    return 1\n'
         expected = 'def f():\n    """第一行：说明，\n\n    第二行:细节.\n    """\n    return 1\n'
         assert format_python(content) == expected
+
+    def test_multiedit_docstring_and_comment(self) -> None:
+        # 同文件多编辑：多行 docstring 替换与行尾注释共存，验证逆序应用与多行 splice
+        content = '"""模块docstring,说明.\n细节:第二行."""\nx = 1  # 行尾:中文,标点.\n'
+        expected = '"""模块 docstring，说明。\n细节：第二行。"""\nx = 1  # 行尾：中文，标点。\n'
+        assert format_python(content) == expected
+        assert format_python(expected) == expected
 
     def test_idempotent(self) -> None:
         once = format_python("# 注释:基于DeepAgents构建\n")
@@ -89,6 +103,16 @@ class TestMain:
         f.write_text(original, encoding="utf-8")
         assert main([str(f)]) == 0
         assert f.read_text(encoding="utf-8") == original
+
+    def test_ignored_abs_path_normalized(self, tmp_path) -> None:
+        # 评审回归：绝对入参须归一化为仓库相对路径，否则全路径/目录前缀豁免静默失效
+        f = tmp_path / "uv.lock"
+        original = "基于DeepAgents构建.\n"
+        f.write_text(original, encoding="utf-8")
+        assert main([str(f.resolve())]) == 0
+        assert f.read_text(encoding="utf-8") == original
+        plans_doc = REPO_ROOT / "docs/superpowers/plans/2026-08-27-precommit-format-hook.md"
+        assert _is_ignored(plans_doc, _load_ignore_patterns())
 
     def test_binary_file_reports_error(self, tmp_path) -> None:
         f = tmp_path / "blob.bin"

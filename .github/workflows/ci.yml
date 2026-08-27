@@ -25,5 +25,8 @@ jobs:
       - name: Format check (ruff format)
         run: uv run ruff format --check .
 
+      - name: Copywriting lint (autocorrect)
+        run: uv run python tools/copywriting.py --lint
+
       - name: Test (pytest)
         run: uv run pytest -q

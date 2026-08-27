@@ -78,6 +78,7 @@ factotum/
 ├── experiments/                # 学习主线：00_baseline ... 06_backfill
 │   └── README.md               #   对照实验三步法与约定
 ├── notes/                      # 实验结论沉淀（每组实验一份笔记）
+├── tools/                      # 开发辅助脚本（copywriting CJK 排版）
 ├── tests/                      # pytest
 ├── .github/workflows/ci.yml    # CI：uv sync --frozen + ruff + pytest
 ├── .opencode/                  # OpenCode 配置（commands，见 §7）
@@ -111,6 +112,12 @@ factotum/
 
 - 所有代码必须通过 `uv run ruff check .` 和 `uv run ruff format --check .`
 - 行宽 100，target py312，规则集 `E/F/W/I/UP/B`
+
+### 提交前 Hook
+
+- 仓库根执行 `uv run pre-commit install` 启用：`ruff check --fix` → `ruff format` → `tools/copywriting.py`（CJK 文案排版，中文句全角标点、中英文加空格；`.py` 仅动注释/docstring）
+- hook 修复文件后提交会中断，review 后 `git add -u` 重新提交
+- 规则配置见 `.autocorrectrc`，忽略清单见 `.autocorrectignore`
 
 ### 命名与风格
 

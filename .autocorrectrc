@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=https://huacnlee.github.io/autocorrect/schema.json
+# CJK 文案排版规则：默认规则保持，仅关掉实验性拼写检查与 Markdown 代码块格式化
+# 为什么关 codeblock：保护 notes/ 里的 state dump 与实验代码样本不被改写
+rules:
+  spellcheck: 0
+context:
+  codeblock: 0

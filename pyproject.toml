@@ -13,6 +13,8 @@ dependencies = [
     "python-dotenv>=1.0",
     "rich>=13.0",
     "apscheduler>=3.10",
+    "langchain-openai>=1.6.0",
+    "tavily-python>=0.8.0",
 ]
 
 [project.scripts]
@@ -20,6 +22,8 @@ factotum = "assistant.cli:main"
 
 [dependency-groups]
 dev = [
+    "autocorrect-py>=2.14.0",
+    "pre-commit>=4.6.2",
     "pytest>=8.0",
     "ruff>=0.12",
 ]
@@ -40,3 +44,4 @@ select = ["E", "F", "W", "I", "UP", "B"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]

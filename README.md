@@ -47,7 +47,7 @@ factotum/
 | 模型接入 | OpenAI 兼容 API（`OPENAI_BASE_URL` + key，任意厂商可切） |
 | 持久化 | SqliteSaver（checkpointer）+ CompositeBackend（`/memories/` 独立分区） |
 | LTM | v1 官方文件式（`memory` + StoreBackend），v2 实验 Store 向量检索 |
-| 工具域（v1） | 联网检索 / 本地文件+shell / 待办+定时 / 长期记忆 |
+| 工具域（v1） | 联网检索 / 本地文件+shell / 待办 + 定时 / 长期记忆 |
 
 ## 快速开始
 
